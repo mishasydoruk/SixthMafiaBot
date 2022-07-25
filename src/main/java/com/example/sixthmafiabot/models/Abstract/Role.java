@@ -1,13 +1,17 @@
 package com.example.sixthmafiabot.models.Abstract;
 
-public  abstract class Role extends BaseModel {
+import lombok.Getter;
+import lombok.Setter;
 
-    enum Side{
-        MAFIA,
-        PEACE
-    }
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
-    private String name;
+@MappedSuperclass
+@Getter
+@Setter
+public class Role extends BaseModel {
 
-    private Side side;
+    @Column(name = "name")
+    protected String name;
+
 }

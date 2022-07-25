@@ -1,56 +1,37 @@
 package com.example.sixthmafiabot.models;
 
-import com.example.sixthmafiabot.events.GameStartedEvent;
-import com.example.sixthmafiabot.events.handlers.EventPublisher;
 import com.example.sixthmafiabot.models.Abstract.BaseModel;
-import com.example.sixthmafiabot.services.Abstract.GameService;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
+import lombok.Setter;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Slf4j
+@Entity
+@Table(name = "games")
 @Getter
+@Setter
 public class Game extends BaseModel {
 
-    private List<Player> players = new ArrayList<>();
-    @NotNull
-    private final Long chatId;
-    private boolean started = false;
+    @OneToMany(mappedBy = "game")
+    private Set<Player> players = new HashSet<>();
 
-    private final EventPublisher eventPublisher;
+    @NotNull @Column(name = "chat_id", unique = true)
+    private Long chatId;
 
-    private final GameService gameService;
+    @NotNull @Column(name="started")
+    private Boolean started = false;
 
-
-    public Game(GameService gameService, EventPublisher eventPublisher, Long chatId){
-
-        this.gameService = gameService;
-        this.eventPublisher = eventPublisher;
+    public Game(Long chatId){
         this.chatId = chatId;
-
-        log.info("Created game in chat with id = " + chatId);
-        gameService.notifyPlayer(chatId, "Registration started!");
     }
 
-    public void start(){
-
-        if(!started){
-            started = true;
-            eventPublisher.publishCustomEvent(new GameStartedEvent(eventPublisher, gameService, chatId));
-            log.info("Game started!");
-            gameService.notifyPlayer(chatId, "The game has begun!");
-        }
-        else{
-            log.warn(String.format("Game in chat with id = %s is already started!", chatId));
-        }
+    protected Game() {
 
     }
-
-
 }

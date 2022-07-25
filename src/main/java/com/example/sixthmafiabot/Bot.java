@@ -1,6 +1,6 @@
 package com.example.sixthmafiabot;
 
-import com.example.sixthmafiabot.services.TelegramGameService;
+import com.example.sixthmafiabot.services.GameService;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 @Getter
 @Component
@@ -24,7 +30,9 @@ public class Bot extends TelegramLongPollingBot {
     private final String botToken;
 
     @Autowired
-    TelegramGameService gameService;
+    GameService gameService;
+
+    ExecutorService service = Executors.newFixedThreadPool(10);
 
     public Bot(TelegramBotsApi telegramBotsApi,
                @Value("${telegram-bot.name}") String botUsername,
@@ -42,17 +50,60 @@ public class Bot extends TelegramLongPollingBot {
         Message requestMessage = update.getMessage();
 
         if(requestMessage.getText().equals("/create")){
-            gameService.createGame(requestMessage.getChatId());
+
+            CompletableFuture<Boolean> gameAlreadyCreated = gameService.createGame(requestMessage.getChatId());
+
+
+            if(gameAlreadyCreated.join()){
+                service.submit(() -> waitAndThenStartGame(requestMessage.getChatId()));
+                sendMessage(requestMessage.getChatId(), "Registration started: ");
+            }
+            else{
+                if(gameService.gameIsStarted(requestMessage.getChatId()).join()){
+                    sendMessage(requestMessage.getChatId(), "Game already created!");
+                }
+            }
         }
 
         if(requestMessage.getText().equals("/start")){
-            gameService.startGameByChatId(requestMessage.getChatId());
+
+            CompletableFuture<Boolean> gameStarted
+                    = gameService.startGameByChatId(requestMessage.getChatId());
+
+            if(gameStarted.join()){
+                sendMessage(requestMessage.getChatId(), "Game is starting now!");
+            }
+
         }
 
         if(requestMessage.getText().equals("/cancel")){
-            gameService.cancelRegistration(requestMessage.getChatId());
+
+            CompletableFuture<Boolean> registrationCanceled
+                    = gameService.cancelRegistration(requestMessage.getChatId());
+
+            if(registrationCanceled.join()){
+                sendMessage(requestMessage.getChatId(), "Registration canceled!");
+            }
         }
     }
+
+
+    public void waitAndThenStartGame(Long chatId) {
+
+        try{
+            TimeUnit.SECONDS.sleep(gameService.getRegistrationTime(chatId).join());
+        }
+        catch (InterruptedException e){
+            log.warn(Arrays.toString(e.getStackTrace()));
+        }
+
+        if(!gameService.gameIsStarted(chatId).join()){
+            gameService.startGameByChatId(chatId);
+            sendMessage(chatId, "Game is starting now!");
+        }
+
+    }
+
 
     public void sendMessage(Long chatId, String text){
 
