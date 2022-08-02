@@ -1,5 +1,8 @@
 package com.example.sixthmafiabot;
 
+import com.example.sixthmafiabot.models.Environment;
+import com.example.sixthmafiabot.repository.EnvironmentRepository;
+import com.example.sixthmafiabot.services.EnvironmentService;
 import com.example.sixthmafiabot.services.GameService;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -32,6 +35,9 @@ public class Bot extends TelegramLongPollingBot {
     @Autowired
     GameService gameService;
 
+    @Autowired
+    EnvironmentRepository environmentService;
+
     ExecutorService service = Executors.newFixedThreadPool(10);
 
     public Bot(TelegramBotsApi telegramBotsApi,
@@ -49,78 +55,11 @@ public class Bot extends TelegramLongPollingBot {
 
         Message requestMessage = update.getMessage();
 
-        if(requestMessage.getText().equals("/create")){
+        Long chatId = requestMessage.getChatId();
 
-            CompletableFuture<Boolean> gameAlreadyCreated = gameService.createGame(requestMessage.getChatId());
-
-
-            if(gameAlreadyCreated.join()){
-                service.submit(() -> waitAndThenStartGame(requestMessage.getChatId()));
-                sendMessage(requestMessage.getChatId(), "Registration started: ");
-            }
-            else{
-                if(gameService.gameIsStarted(requestMessage.getChatId()).join()){
-                    sendMessage(requestMessage.getChatId(), "Game already created!");
-                }
-            }
-        }
-
-        if(requestMessage.getText().equals("/start")){
-
-            CompletableFuture<Boolean> gameStarted
-                    = gameService.startGameByChatId(requestMessage.getChatId());
-
-            if(gameStarted.join()){
-                sendMessage(requestMessage.getChatId(), "Game is starting now!");
-            }
-
-        }
-
-        if(requestMessage.getText().equals("/cancel")){
-
-            CompletableFuture<Boolean> registrationCanceled
-                    = gameService.cancelRegistration(requestMessage.getChatId());
-
-            if(registrationCanceled.join()){
-                sendMessage(requestMessage.getChatId(), "Registration canceled!");
-            }
-        }
-    }
-
-
-    public void waitAndThenStartGame(Long chatId) {
-
-        try{
-            TimeUnit.SECONDS.sleep(gameService.getRegistrationTime(chatId).join());
-        }
-        catch (InterruptedException e){
-            log.warn(Arrays.toString(e.getStackTrace()));
-        }
-
-        if(!gameService.gameIsStarted(chatId).join()){
-            gameService.startGameByChatId(chatId);
-            sendMessage(chatId, "Game is starting now!");
-        }
+        Environment env = environmentService.getEnvironmentByChatId(chatId).join();
 
     }
-
-
-    public void sendMessage(Long chatId, String text){
-
-        SendMessage response = new SendMessage();
-
-        response.setChatId(chatId.toString());
-        response.setText(text);
-
-        try {
-            execute(response);
-        }
-        catch (TelegramApiException e){
-            log.warn(e.getMessage());
-        }
-
-    }
-
 
 
 }

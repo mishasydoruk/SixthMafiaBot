@@ -5,10 +5,7 @@ import com.example.sixthmafiabot.models.Abstract.BaseModel;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="environments")
@@ -16,10 +13,19 @@ import javax.persistence.Table;
 @Setter
 public class Environment extends BaseModel {
 
-    @Column(name = "telegram_id")
-    private Long telegram_id;
+    @Column(name = "chat_id")
+    private Long chatId;
+
+    @OneToOne(mappedBy="enviromnent")
+    private Game game;
 
 
+    public Environment(Long chatId){
 
+        this.chatId = chatId;
+    }
 
+    protected Environment() {
+
+    }
 }

@@ -1,7 +1,6 @@
 package com.example.sixthmafiabot.models;
 
 import com.example.sixthmafiabot.models.Abstract.BaseModel;
-import com.example.sixthmafiabot.models.Abstract.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,5 +17,8 @@ public class Player extends BaseModel {
 
     @ManyToOne
     private Game game;
+
+    @Column(name = "is_alive")
+    private Boolean isAlive = true;
 
 }

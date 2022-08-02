@@ -1,24 +1,22 @@
 package com.example.sixthmafiabot.repository;
 
-
-import com.example.sixthmafiabot.models.Environment;
 import com.example.sixthmafiabot.models.Game;
+import com.example.sixthmafiabot.models.Player;
+import com.example.sixthmafiabot.models.User;
 import org.springframework.data.repository.Repository;
 import org.springframework.scheduling.annotation.Async;
 
-import javax.transaction.Transactional;
 import java.util.concurrent.CompletableFuture;
 
-public interface GameRepository extends Repository<Game, Long> {
+public interface PlayerRepository extends Repository<Player, Long> {
 
     @Async("asyncExecutor")
-    @Transactional
-    void save(Game game);
+    void save(Player player);
 
     @Async("asyncExecutor")
-    CompletableFuture<Game> getGameByEnvironment(Environment env);
+    CompletableFuture<Player> getPlayerByUser(User user);
 
     @Async("asyncExecutor")
-    @Transactional
-    void deleteGameByChatId(Long chatId);
+    void deletePlayersByGame(Game game);
+
 }
