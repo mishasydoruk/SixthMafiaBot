@@ -3,7 +3,7 @@ package com.example.sixthmafiabot.services;
 import com.example.sixthmafiabot.exceptions.NotFoundException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.Environment;
-import com.example.sixthmafiabot.repository.EnvironmentRepository;
+import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringEnvironmentRepository;
 import com.example.sixthmafiabot.services.Abstract.BaseService;
 import com.example.sixthmafiabot.validators.EnvironmentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class EnvironmentService implements BaseService {
     EnvironmentValidator environmentValidator;
 
     @Autowired
-    EnvironmentRepository environmentRepository;
+    SpringEnvironmentRepository environmentRepository;
 
     public CompletableFuture<Environment> createEnvironment(Environment env) throws ServiceValidationError {
 

@@ -4,7 +4,7 @@ import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.Environment;
 import com.example.sixthmafiabot.models.Game;
-import com.example.sixthmafiabot.repository.GameRepository;
+import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringGameRepository;
 import com.example.sixthmafiabot.validators.Abstract.BaseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -12,9 +12,7 @@ import org.springframework.stereotype.Component;
 
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.ValidationException;
-import javax.validation.Validator;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -22,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 public class GameValidator extends BaseValidator {
 
     @Autowired
-    private GameRepository gameRepository;
+    private SpringGameRepository gameRepository;
 
 
     public void validateIfAlreadyExists(Environment env) throws AlreadyExistsExcepeion {

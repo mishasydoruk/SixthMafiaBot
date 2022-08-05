@@ -4,8 +4,7 @@ import com.example.sixthmafiabot.exceptions.NotFoundException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.Player;
 import com.example.sixthmafiabot.models.User;
-import com.example.sixthmafiabot.repository.PlayerRepository;
-import com.example.sixthmafiabot.repository.UserRepository;
+import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringPlayerRepository;
 import com.example.sixthmafiabot.services.Abstract.BaseService;
 import com.example.sixthmafiabot.validators.PlayerValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class PlayerService implements BaseService {
 
     @Autowired
-    PlayerRepository playerRepository;
+    SpringPlayerRepository playerRepository;
 
     @Autowired
     UserService userService;

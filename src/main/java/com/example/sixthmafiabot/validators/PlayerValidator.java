@@ -3,14 +3,12 @@ package com.example.sixthmafiabot.validators;
 import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.Player;
-import com.example.sixthmafiabot.models.User;
-import com.example.sixthmafiabot.repository.PlayerRepository;
+import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringPlayerRepository;
 import com.example.sixthmafiabot.validators.Abstract.BaseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Column;
 import javax.validation.ConstraintViolation;
 import javax.validation.ValidationException;
 import java.util.Set;
@@ -20,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public class PlayerValidator extends BaseValidator {
 
     @Autowired
-    PlayerRepository playerRepository;
+    SpringPlayerRepository playerRepository;
 
     @Async("asyncExecutor")
     public void validatePlayer(Player player) throws ValidationException{

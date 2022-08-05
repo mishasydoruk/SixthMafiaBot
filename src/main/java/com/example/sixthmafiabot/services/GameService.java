@@ -4,7 +4,7 @@ import com.example.sixthmafiabot.exceptions.NotFoundException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.Environment;
 import com.example.sixthmafiabot.models.Game;
-import com.example.sixthmafiabot.repository.GameRepository;
+import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringGameRepository;
 import com.example.sixthmafiabot.services.Abstract.BaseService;
 import com.example.sixthmafiabot.validators.GameValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +13,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @Slf4j
 public class GameService implements BaseService {
 
     @Autowired
-    GameRepository gameRepository;
+    SpringGameRepository gameRepository;
 
     @Autowired
     GameValidator gameValidator;

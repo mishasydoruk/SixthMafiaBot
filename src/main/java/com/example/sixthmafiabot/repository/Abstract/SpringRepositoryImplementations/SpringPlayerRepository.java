@@ -1,4 +1,4 @@
-package com.example.sixthmafiabot.repository;
+package com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations;
 
 import com.example.sixthmafiabot.models.Game;
 import com.example.sixthmafiabot.models.Player;
@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface PlayerRepository extends Repository<Player, Long> {
+public interface SpringPlayerRepository extends Repository<Player, Long> {
 
     @Async("asyncExecutor")
     void save(Player player);

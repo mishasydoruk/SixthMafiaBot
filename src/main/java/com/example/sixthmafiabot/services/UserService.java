@@ -1,11 +1,13 @@
 package com.example.sixthmafiabot.services;
 
+import com.example.sixthmafiabot.DTO.UserDTO;
 import com.example.sixthmafiabot.exceptions.NotFoundException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.User;
 import com.example.sixthmafiabot.repository.UserRepository;
 import com.example.sixthmafiabot.services.Abstract.BaseService;
 import com.example.sixthmafiabot.validators.UserValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@Slf4j
 public class UserService implements BaseService {
 
     @Autowired
@@ -22,13 +25,11 @@ public class UserService implements BaseService {
     UserValidator userValidator;
 
     @Async("asyncExecutor")
-    public CompletableFuture<User> createUser(User user) throws ServiceValidationError {
+    public CompletableFuture<User> createUser(UserDTO userDTO) throws ServiceValidationError {
 
-        User validatedUser = userValidator.validateCreate(user).join();
+        UserDTO validatedUserDTO = userValidator.validateCreate(userDTO).join();
 
-        userRepository.save(validatedUser);
-
-        return CompletableFuture.completedFuture(validatedUser);
+        return userRepository.create(validatedUserDTO);
     }
 
     @Async("asyncExecutor")

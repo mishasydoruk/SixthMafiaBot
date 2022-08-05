@@ -4,7 +4,7 @@ import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.Environment;
 
-import com.example.sixthmafiabot.repository.EnvironmentRepository;
+import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringEnvironmentRepository;
 import com.example.sixthmafiabot.validators.Abstract.BaseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 public class EnvironmentValidator extends BaseValidator {
 
     @Autowired
-    EnvironmentRepository environmentRepository;
+    SpringEnvironmentRepository environmentRepository;
 
     public void validateIfAlreadyExists(Environment env) throws AlreadyExistsExcepeion {
 

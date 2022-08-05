@@ -1,4 +1,4 @@
-package com.example.sixthmafiabot.repository;
+package com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations;
 
 
 import com.example.sixthmafiabot.models.Environment;
@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import javax.transaction.Transactional;
 import java.util.concurrent.CompletableFuture;
 
-public interface GameRepository extends Repository<Game, Long> {
+public interface SpringGameRepository extends Repository<Game, Long> {
 
     @Async("asyncExecutor")
     @Transactional
@@ -20,5 +20,5 @@ public interface GameRepository extends Repository<Game, Long> {
 
     @Async("asyncExecutor")
     @Transactional
-    void deleteGameByChatId(Long chatId);
+    void deleteGameByEnvironment(Environment env);
 }
