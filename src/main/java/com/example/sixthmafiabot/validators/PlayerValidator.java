@@ -2,6 +2,7 @@ package com.example.sixthmafiabot.validators;
 
 import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
+import com.example.sixthmafiabot.exceptions.ValidateException;
 import com.example.sixthmafiabot.models.Player;
 import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringPlayerRepository;
 import com.example.sixthmafiabot.validators.Abstract.BaseValidator;
@@ -21,18 +22,9 @@ public class PlayerValidator extends BaseValidator {
     SpringPlayerRepository playerRepository;
 
     @Async("asyncExecutor")
-    public void validatePlayer(Player player) throws ValidationException{
+    public void validatePlayer(Player player) throws ValidateException {
 
-        Set<ConstraintViolation<Player>> violations =
-                validator.validate(player);
-
-        if (!violations.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (ConstraintViolation<Player> constraintViolation : violations) {
-                sb.append(constraintViolation.getMessage());
-            }
-            throw new ValidationException("Error occurred: " + sb.toString());
-        }
+        validateDTO(player);
     }
 
     @Async("asyncExecutor")
@@ -61,7 +53,7 @@ public class PlayerValidator extends BaseValidator {
         try {
             validatePlayer(player);
         }
-        catch (ValidationException ex){
+        catch (ValidateException ex){
             throw new ServiceValidationError(ex.getMessage());
         }
 
@@ -74,7 +66,7 @@ public class PlayerValidator extends BaseValidator {
         try {
             validatePlayer(player);
         }
-        catch (ValidationException ex){
+        catch (ValidateException ex){
             throw new ServiceValidationError(ex.getMessage());
         }
 

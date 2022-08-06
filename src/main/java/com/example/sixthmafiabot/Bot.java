@@ -1,8 +1,6 @@
 package com.example.sixthmafiabot;
 
-import com.example.sixthmafiabot.DTO.UserDTO;
-import com.example.sixthmafiabot.exceptions.ServiceValidationError;
-import com.example.sixthmafiabot.models.Environment;
+import com.example.sixthmafiabot.DTO.CreateUserDTO;
 import com.example.sixthmafiabot.models.User;
 import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringEnvironmentRepository;
 import com.example.sixthmafiabot.services.GameService;
@@ -63,15 +61,15 @@ public class Bot extends TelegramLongPollingBot {
 
         if(Objects.equals(requestMessage.getText(), "/save")){
 
-            UserDTO userDTO = new UserDTO();
+            CreateUserDTO createUserDTO = new CreateUserDTO();
 
             log.info("Update from user "+requestMessage.getFrom());
 
-            userDTO.setUsername(requestMessage.getFrom().getFirstName());
-            userDTO.setTelegramId(requestMessage.getFrom().getId());
+            createUserDTO.setUsername(requestMessage.getFrom().getFirstName());
+            createUserDTO.setTelegramId(requestMessage.getFrom().getId());
 
             try {
-                User created = userService.createUser(userDTO).join();
+                User created = userService.createUser(createUserDTO).join();
             }
             catch (CompletionException ex){
                 log.warn(ex.getMessage());

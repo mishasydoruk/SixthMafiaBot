@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class UserDTO implements BaseDTO {
+public class CreateUserDTO implements BaseDTO {
 
     @NotNull
     private Long telegramId;

@@ -19,13 +19,13 @@ public class EnvironmentService implements BaseService {
     EnvironmentValidator environmentValidator;
 
     @Autowired
-    SpringEnvironmentRepository environmentRepository;
+    SpringEnvironmentRepository springEnvironmentRepository;
 
     public CompletableFuture<Environment> createEnvironment(Environment env) throws ServiceValidationError {
 
         Environment validatedEnvironment = environmentValidator.validateCreate(env).join();
 
-        environmentRepository.save(validatedEnvironment);
+        springEnvironmentRepository.save(validatedEnvironment);
 
         return CompletableFuture.completedFuture(validatedEnvironment);
 
@@ -33,7 +33,7 @@ public class EnvironmentService implements BaseService {
 
     public CompletableFuture<Environment> getEnvironment(Long chatId) throws NotFoundException {
 
-        Environment env = environmentRepository.getEnvironmentByChatId(chatId).join();
+        Environment env = springEnvironmentRepository.getEnvironmentByChatId(chatId).join();
 
         if(env == null){
 

@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 public class GameService implements BaseService {
 
     @Autowired
-    SpringGameRepository gameRepository;
+    SpringGameRepository springGameRepository;
 
     @Autowired
     GameValidator gameValidator;
@@ -28,7 +28,7 @@ public class GameService implements BaseService {
     public CompletableFuture<Boolean> createGame(Environment env) throws ServiceValidationError {
 
         Game game = gameValidator.validateCreate(env).join();
-        gameRepository.save(game);
+        springGameRepository.save(game);
         return CompletableFuture.completedFuture(true);
     }
 
@@ -41,7 +41,7 @@ public class GameService implements BaseService {
     @Async("asyncExecutor")
     public CompletableFuture<Game> getGame(Environment env) throws NotFoundException {
 
-        Game game = gameRepository.getGameByEnvironment(env).join();
+        Game game = springGameRepository.getGameByEnvironment(env).join();
 
         if (game == null){
 

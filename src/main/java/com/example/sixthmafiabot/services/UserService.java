@@ -1,6 +1,6 @@
 package com.example.sixthmafiabot.services;
 
-import com.example.sixthmafiabot.DTO.UserDTO;
+import com.example.sixthmafiabot.DTO.CreateUserDTO;
 import com.example.sixthmafiabot.exceptions.NotFoundException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.User;
@@ -25,11 +25,11 @@ public class UserService implements BaseService {
     UserValidator userValidator;
 
     @Async("asyncExecutor")
-    public CompletableFuture<User> createUser(UserDTO userDTO) throws ServiceValidationError {
+    public CompletableFuture<User> createUser(CreateUserDTO createUserDTO) throws ServiceValidationError {
 
-        UserDTO validatedUserDTO = userValidator.validateCreate(userDTO).join();
+        CreateUserDTO validatedCreateUserDTO = userValidator.validateCreate(createUserDTO).join();
 
-        return userRepository.create(validatedUserDTO);
+        return userRepository.create(validatedCreateUserDTO);
     }
 
     @Async("asyncExecutor")

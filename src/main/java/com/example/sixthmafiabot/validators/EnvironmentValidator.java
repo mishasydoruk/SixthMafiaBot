@@ -2,6 +2,7 @@ package com.example.sixthmafiabot.validators;
 
 import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
+import com.example.sixthmafiabot.exceptions.ValidateException;
 import com.example.sixthmafiabot.models.Environment;
 
 import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringEnvironmentRepository;
@@ -32,17 +33,9 @@ public class EnvironmentValidator extends BaseValidator {
 
     }
 
-    public void validateEnvironment(Environment env) throws ValidationException {
-        Set<ConstraintViolation<Environment>> violations =
-                validator.validate(env);
+    public void validateEnvironment(Environment env) throws ValidateException {
 
-        if (!violations.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (ConstraintViolation<Environment> constraintViolation : violations) {
-                sb.append(constraintViolation.getMessage());
-            }
-            throw new ValidationException("Error occurred: " + sb.toString());
-        }
+        validateDTO(env);
     }
 
     public CompletableFuture<Environment> validateCreate(Environment env) throws ServiceValidationError {
@@ -50,7 +43,7 @@ public class EnvironmentValidator extends BaseValidator {
         try {
             validateEnvironment(env);
         }
-        catch (ValidationException ex){
+        catch (ValidateException ex){
             throw new ServiceValidationError(ex.getMessage());
         }
 

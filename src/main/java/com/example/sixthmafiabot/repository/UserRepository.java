@@ -1,6 +1,6 @@
 package com.example.sixthmafiabot.repository;
 
-import com.example.sixthmafiabot.DTO.UserDTO;
+import com.example.sixthmafiabot.DTO.CreateUserDTO;
 import com.example.sixthmafiabot.models.User;
 import com.example.sixthmafiabot.repository.Abstract.BaseRepository;
 import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringUserRepository;
@@ -19,24 +19,20 @@ public class UserRepository implements BaseRepository {
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    SpringUserRepository userRepository;
+    SpringUserRepository springUserRepository;
 
-    public CompletableFuture<User> create(UserDTO userDTO) {
+    public CompletableFuture<User> create(CreateUserDTO createUserDTO) {
 
-        User user = modelMapper.map(userDTO, User.class);
+        User user = modelMapper.map(createUserDTO, User.class);
 
-        save(user);
+        springUserRepository.save(user);
         return CompletableFuture.completedFuture(user);
     }
 
-    public void save(User user) {
-
-        userRepository.save(user);
-    }
 
     public CompletableFuture<User> getUserByTelegramId(Long telegramId) {
 
-        User user = userRepository.getUserByTelegramId(telegramId).join();
+        User user = springUserRepository.getUserByTelegramId(telegramId).join();
 
         return CompletableFuture.completedFuture(user);
     }

@@ -2,6 +2,7 @@ package com.example.sixthmafiabot.validators;
 
 import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
+import com.example.sixthmafiabot.exceptions.ValidateException;
 import com.example.sixthmafiabot.models.Environment;
 import com.example.sixthmafiabot.models.Game;
 import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringGameRepository;
@@ -33,18 +34,9 @@ public class GameValidator extends BaseValidator {
     }
 
 
-    private void validateGame(Game game) throws ValidationException{
+    private void validateGame(Game game) throws ValidateException {
 
-        Set<ConstraintViolation<Game>> violations =
-                validator.validate(game);
-
-        if (!violations.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (ConstraintViolation<Game> constraintViolation : violations) {
-                sb.append(constraintViolation.getMessage());
-            }
-            throw new  ValidationException("Error occurred: " + sb.toString());
-        }
+        validateDTO(game);
     }
 
 
@@ -63,7 +55,7 @@ public class GameValidator extends BaseValidator {
         try {
             validateGame(gameToCreate);
         }
-        catch (ValidationException ex){
+        catch (ValidateException ex){
             throw new ServiceValidationError(ex.getMessage());
         }
 
@@ -77,7 +69,7 @@ public class GameValidator extends BaseValidator {
         try {
             validateGame(newGame);
         }
-        catch (ValidationException ex){
+        catch (ValidateException ex){
             throw new ServiceValidationError(ex.getMessage());
         }
 

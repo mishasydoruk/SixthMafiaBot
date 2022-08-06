@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class PlayerService implements BaseService {
 
     @Autowired
-    SpringPlayerRepository playerRepository;
+    SpringPlayerRepository springPlayerRepository;
 
     @Autowired
     UserService userService;
@@ -30,7 +30,7 @@ public class PlayerService implements BaseService {
 
         Player validatedPlayer = playerValidator.validateCreate(player).join();
 
-        playerRepository.save(validatedPlayer);
+        springPlayerRepository.save(validatedPlayer);
 
         return CompletableFuture.completedFuture(validatedPlayer);
     }
@@ -40,7 +40,7 @@ public class PlayerService implements BaseService {
 
         User user = userService.getUserByTelegramId(userTelegramId).join();
 
-        Player player = playerRepository.getPlayerByUser(user).join();
+        Player player = springPlayerRepository.getPlayerByUser(user).join();
 
         if(player == null){
             throw new NotFoundException("No player with user telegram id = " + userTelegramId);
