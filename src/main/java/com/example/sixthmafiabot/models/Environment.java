@@ -20,12 +20,4 @@ public class Environment extends BaseModel {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    public Environment(Long chatId){
-
-        this.chatId = chatId;
-    }
-
-    protected Environment() {
-
-    }
 }

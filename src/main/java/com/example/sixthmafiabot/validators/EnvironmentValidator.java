@@ -1,18 +1,17 @@
 package com.example.sixthmafiabot.validators;
 
-import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
+import com.example.sixthmafiabot.DTO.CreateEnvironmentDTO;
+import com.example.sixthmafiabot.exceptions.AlreadyExistsException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
-import com.example.sixthmafiabot.exceptions.ValidateException;
+import com.example.sixthmafiabot.exceptions.ValidationException;
 import com.example.sixthmafiabot.models.Environment;
 
 import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringEnvironmentRepository;
 import com.example.sixthmafiabot.validators.Abstract.BaseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ValidationException;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -22,37 +21,43 @@ public class EnvironmentValidator extends BaseValidator {
     @Autowired
     SpringEnvironmentRepository environmentRepository;
 
-    public void validateIfAlreadyExists(Environment env) throws AlreadyExistsExcepeion {
+    @Async("validatorExecutor")
+    public void validateIfAlreadyExists(CreateEnvironmentDTO env) throws AlreadyExistsException {
 
         boolean alreadyExisted = environmentRepository
-                .getEnvironmentByChatId(env.getChatId()) != null;
+                .getEnvironmentByChatId(env.getChatId()).join() != null;
 
         if(alreadyExisted){
-            throw new AlreadyExistsExcepeion("Environment with chatId = %s already existed!".formatted(env.getChatId()));
+            throw new AlreadyExistsException("chatId",
+                    "Environment with chatId = %s already existed!"
+                            .formatted(env.getChatId())
+            );
         }
 
     }
 
-    public void validateEnvironment(Environment env) throws ValidateException {
+    @Async("validatorExecutor")
+    public void validateEnvironment(CreateEnvironmentDTO env)
+            throws ValidationException {
 
         validateDTO(env);
     }
 
-    public CompletableFuture<Environment> validateCreate(Environment env) throws ServiceValidationError {
+    @Async("validatorExecutor")
+    public CompletableFuture<CreateEnvironmentDTO> validateCreate(CreateEnvironmentDTO env) throws ServiceValidationError {
 
         try {
             validateEnvironment(env);
         }
-        catch (ValidateException ex){
-            throw new ServiceValidationError(ex.getMessage());
+        catch (ValidationException ex){
+            throw new ServiceValidationError(ex.getExceptionMap());
         }
-
 
        try {
            validateIfAlreadyExists(env);
        }
-       catch (AlreadyExistsExcepeion ex){
-           throw new ServiceValidationError(ex.getMessage());
+       catch (AlreadyExistsException ex){
+           throw new ServiceValidationError(ex.getField(), ex.getErrorMessage());
        }
 
        return CompletableFuture.completedFuture(env);

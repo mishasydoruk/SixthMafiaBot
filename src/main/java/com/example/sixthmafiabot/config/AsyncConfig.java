@@ -11,14 +11,42 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AsyncConfig
 {
-    @Bean(name = "asyncExecutor")
-    public Executor asyncExecutor()
+    @Bean(name = "repoExecutor")
+    public Executor repoExecutor()
+    {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(10);
+        executor.setThreadNamePrefix("AsynchRepoThread-");
+        executor.setKeepAliveSeconds(200);
+        executor.initialize();
+        return executor;
+    }
+
+
+    @Bean(name = "serviceExecutor")
+    public Executor serviceExecutor()
+    {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(10);
+        executor.setThreadNamePrefix("AsynchServiceThread-");
+        executor.setKeepAliveSeconds(200);
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(name = "validatorExecutor")
+    public Executor validatorExecutor()
     {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(3);
         executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("AsynchThread-");
+        executor.setQueueCapacity(10);
+        executor.setThreadNamePrefix("AsynchValidatorThread-");
+        executor.setKeepAliveSeconds(200);
         executor.initialize();
         return executor;
     }

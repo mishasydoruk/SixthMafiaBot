@@ -63,7 +63,7 @@ public class Bot extends TelegramLongPollingBot {
 
             CreateUserDTO createUserDTO = new CreateUserDTO();
 
-            log.info("Update from user "+requestMessage.getFrom());
+            log.info("Update from "+requestMessage);
 
             createUserDTO.setUsername(requestMessage.getFrom().getFirstName());
             createUserDTO.setTelegramId(requestMessage.getFrom().getId());

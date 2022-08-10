@@ -18,7 +18,7 @@ public abstract class BaseModel {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     protected Long id;
 
 }

@@ -1,10 +1,10 @@
 package com.example.sixthmafiabot.services;
 
-import com.example.sixthmafiabot.exceptions.NotFoundException;
+import com.example.sixthmafiabot.DTO.CreateGameDTO;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.Environment;
 import com.example.sixthmafiabot.models.Game;
-import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringGameRepository;
+import com.example.sixthmafiabot.repository.GameRepository;
 import com.example.sixthmafiabot.services.Abstract.BaseService;
 import com.example.sixthmafiabot.validators.GameValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -19,36 +19,26 @@ import java.util.concurrent.CompletableFuture;
 public class GameService implements BaseService {
 
     @Autowired
-    SpringGameRepository springGameRepository;
+    GameRepository gameRepository;
 
     @Autowired
     GameValidator gameValidator;
 
-    @Async("asyncExecutor")
-    public CompletableFuture<Boolean> createGame(Environment env) throws ServiceValidationError {
+    @Async("serviceExecutor")
+    public CompletableFuture<Game> createGame(CreateGameDTO game) throws ServiceValidationError {
 
-        Game game = gameValidator.validateCreate(env).join();
-        springGameRepository.save(game);
-        return CompletableFuture.completedFuture(true);
+        CompletableFuture<CreateGameDTO> validatedGame = gameValidator.validateCreate(game);
+
+        return validatedGame
+                .thenCompose(valGame -> gameRepository.create(valGame));
     }
 
-    @Async("asyncExecutor")
-    public CompletableFuture<Integer> getRegistrationTime(Environment env){
 
-        return CompletableFuture.completedFuture(10);
-    }
+    @Async("serviceExecutor")
+    public CompletableFuture<Game> getGame(Long envId)  {
 
-    @Async("asyncExecutor")
-    public CompletableFuture<Game> getGame(Environment env) throws NotFoundException {
+        return gameRepository.getGameByEnvironmentChatId(envId);
 
-        Game game = springGameRepository.getGameByEnvironment(env).join();
-
-        if (game == null){
-
-            throw new NotFoundException("No game in chat with id = "+env.getChatId());
-        }
-
-        return CompletableFuture.completedFuture(game);
     }
 
 

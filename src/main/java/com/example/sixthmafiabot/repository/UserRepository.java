@@ -7,20 +7,19 @@ import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementat
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.CompletableFuture;
 
 @Repository
-
 @Slf4j
-public class UserRepository implements BaseRepository {
-
-    private final ModelMapper modelMapper = new ModelMapper();
+public class UserRepository extends BaseRepository {
 
     @Autowired
     SpringUserRepository springUserRepository;
 
+    @Async("repoExecutor")
     public CompletableFuture<User> create(CreateUserDTO createUserDTO) {
 
         User user = modelMapper.map(createUserDTO, User.class);
@@ -29,12 +28,12 @@ public class UserRepository implements BaseRepository {
         return CompletableFuture.completedFuture(user);
     }
 
-
+    @Async("repoExecutor")
     public CompletableFuture<User> getUserByTelegramId(Long telegramId) {
 
-        User user = springUserRepository.getUserByTelegramId(telegramId).join();
-
-        return CompletableFuture.completedFuture(user);
+        return springUserRepository.getUserByTelegramId(telegramId);
     }
+
+
 
 }

@@ -22,6 +22,6 @@ public class User extends BaseModel {
 
     @NotNull
     @Column(name = "telegram_id")
-    Long telegramId;
+    private Long telegramId;
 
 }

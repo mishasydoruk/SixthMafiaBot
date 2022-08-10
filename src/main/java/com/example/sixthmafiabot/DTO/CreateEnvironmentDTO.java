@@ -8,12 +8,9 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class CreatePlayerDTO implements BaseDTO {
+public class CreateEnvironmentDTO implements BaseDTO {
 
     @NotNull
-    private Long telegramId;
-
-    @NotNull
-    private Long environmentId;
+    private Long chatId;
 
 }

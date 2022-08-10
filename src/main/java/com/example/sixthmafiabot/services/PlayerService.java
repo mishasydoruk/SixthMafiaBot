@@ -1,12 +1,11 @@
 package com.example.sixthmafiabot.services;
 
-import com.example.sixthmafiabot.exceptions.NotFoundException;
+import com.example.sixthmafiabot.DTO.CreatePlayerDTO;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.Player;
-import com.example.sixthmafiabot.models.User;
-import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringPlayerRepository;
 import com.example.sixthmafiabot.services.Abstract.BaseService;
 import com.example.sixthmafiabot.validators.PlayerValidator;
+import com.example.sixthmafiabot.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 public class PlayerService implements BaseService {
 
     @Autowired
-    SpringPlayerRepository springPlayerRepository;
+    PlayerRepository playerRepository;
 
     @Autowired
     UserService userService;
@@ -25,28 +24,20 @@ public class PlayerService implements BaseService {
     @Autowired
     PlayerValidator playerValidator;
 
-    @Async("asyncExecutor")
-    public CompletableFuture<Player> createPlayer(Player player) throws ServiceValidationError {
+    @Async("serviceExecutor")
+    public CompletableFuture<Player> createPlayer(CreatePlayerDTO player) throws ServiceValidationError {
 
-        Player validatedPlayer = playerValidator.validateCreate(player).join();
+        CompletableFuture<CreatePlayerDTO> validatedPlayer = playerValidator.validateCreate(player);
 
-        springPlayerRepository.save(validatedPlayer);
+        return validatedPlayer
+                .thenCompose(valPlayer -> playerRepository.create(valPlayer));
 
-        return CompletableFuture.completedFuture(validatedPlayer);
     }
 
-    @Async("asyncExecutor")
-    public CompletableFuture<Player> getPlayerByUserId(Long userTelegramId) throws NotFoundException {
+    @Async("serviceExecutor")
+    public CompletableFuture<Player> getPlayerByUserId(Long userTelegramId)  {
 
-        User user = userService.getUserByTelegramId(userTelegramId).join();
-
-        Player player = springPlayerRepository.getPlayerByUser(user).join();
-
-        if(player == null){
-            throw new NotFoundException("No player with user telegram id = " + userTelegramId);
-        }
-
-        return CompletableFuture.completedFuture(player);
+        return playerRepository.getPlayerByUserTelegramId(userTelegramId);
     }
 
 }

@@ -1,8 +1,10 @@
 package com.example.sixthmafiabot.validators;
 
-import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
+import com.example.sixthmafiabot.DTO.CreateGameDTO;
+import com.example.sixthmafiabot.DTO.UpdateGameDTO;
+import com.example.sixthmafiabot.exceptions.AlreadyExistsException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
-import com.example.sixthmafiabot.exceptions.ValidateException;
+import com.example.sixthmafiabot.exceptions.ValidationException;
 import com.example.sixthmafiabot.models.Environment;
 import com.example.sixthmafiabot.models.Game;
 import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringGameRepository;
@@ -12,9 +14,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ValidationException;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -24,60 +23,72 @@ public class GameValidator extends BaseValidator {
     private SpringGameRepository gameRepository;
 
 
-    public void validateIfAlreadyExists(Environment env) throws AlreadyExistsExcepeion {
+    @Async("validatorExecutor")
+    public void validateIfAlreadyExists(CreateGameDTO game)
+            throws AlreadyExistsException {
 
-        boolean gameAlreadyExists = gameRepository.getGameByEnvironment(env).join()!=null;
+
+        boolean gameAlreadyExists = gameRepository
+                .findGameByEnvironmentChatId(game.getEnvironmentId())
+                .join() != null;
 
         if(gameAlreadyExists){
-            throw new AlreadyExistsExcepeion("Game already created in environment with id="+env.getChatId());
+
+            throw new AlreadyExistsException(
+                    "environmentId",
+                    "Game already created in environment with id="
+                            + game.getEnvironmentId()
+            );
         }
+
     }
 
-
-    private void validateGame(Game game) throws ValidateException {
+    @Async("validatorExecutor")
+    private void validateCreateGame(CreateGameDTO game) throws ValidationException {
 
         validateDTO(game);
     }
 
+    @Async("validatorExecutor")
+    private void validateUpdateGame(UpdateGameDTO game) throws ValidationException {
 
-    @Async("asyncExecutor")
-    public CompletableFuture<Game> validateCreate(Environment env) throws ServiceValidationError {
-
-        try{
-            validateIfAlreadyExists(env);
-        }
-        catch (AlreadyExistsExcepeion ex){
-            throw new ServiceValidationError(ex.getMessage());
-        }
-
-        Game gameToCreate = new Game(env);
-
-        try {
-            validateGame(gameToCreate);
-        }
-        catch (ValidateException ex){
-            throw new ServiceValidationError(ex.getMessage());
-        }
-
-
-        return CompletableFuture.completedFuture(gameToCreate);
+        validateDTO(game);
     }
 
-    @Async("asyncExecutor")
-    public CompletableFuture<Game> validateUpdate(Game newGame) throws ServiceValidationError {
+    @Async("validatorExecutor")
+    public CompletableFuture<CreateGameDTO> validateCreate(CreateGameDTO game) throws ServiceValidationError {
+
+        try{
+            validateIfAlreadyExists(game);
+        }
+        catch (AlreadyExistsException ex){
+            throw new ServiceValidationError(ex.getField(), ex.getErrorMessage());
+        }
+
 
         try {
-            validateGame(newGame);
+            validateCreateGame(game);
         }
-        catch (ValidateException ex){
-            throw new ServiceValidationError(ex.getMessage());
+        catch (ValidationException ex){
+            throw new ServiceValidationError(ex.getExceptionMap());
+        }
+
+
+        return CompletableFuture.completedFuture(game);
+    }
+
+    @Async("validatorExecutor")
+    public CompletableFuture<UpdateGameDTO> validateUpdate(UpdateGameDTO newGame) throws ServiceValidationError {
+
+        try {
+            validateUpdateGame(newGame);
+        }
+        catch (ValidationException ex){
+            throw new ServiceValidationError(ex.getExceptionMap());
         }
 
         return CompletableFuture.completedFuture(newGame);
 
     }
-
-
-
 
 }

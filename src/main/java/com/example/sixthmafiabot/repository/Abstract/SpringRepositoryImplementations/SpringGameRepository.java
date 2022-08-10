@@ -11,14 +11,18 @@ import java.util.concurrent.CompletableFuture;
 
 public interface SpringGameRepository extends Repository<Game, Long> {
 
-    @Async("asyncExecutor")
+    @Async("repoExecutor")
     @Transactional
     void save(Game game);
 
-    @Async("asyncExecutor")
+    @Async("repoExecutor")
     CompletableFuture<Game> getGameByEnvironment(Environment env);
 
-    @Async("asyncExecutor")
+    @Async("repoExecutor")
+    CompletableFuture<Game> findGameByEnvironmentChatId(Long chatId);
+
+
+    @Async("repoExecutor")
     @Transactional
     void deleteGameByEnvironment(Environment env);
 }

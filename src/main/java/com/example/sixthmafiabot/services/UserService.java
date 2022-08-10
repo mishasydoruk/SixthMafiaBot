@@ -1,7 +1,6 @@
 package com.example.sixthmafiabot.services;
 
 import com.example.sixthmafiabot.DTO.CreateUserDTO;
-import com.example.sixthmafiabot.exceptions.NotFoundException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.User;
 import com.example.sixthmafiabot.repository.UserRepository;
@@ -24,24 +23,21 @@ public class UserService implements BaseService {
     @Autowired
     UserValidator userValidator;
 
-    @Async("asyncExecutor")
+    @Async("serviceExecutor")
     public CompletableFuture<User> createUser(CreateUserDTO createUserDTO) throws ServiceValidationError {
 
-        CreateUserDTO validatedCreateUserDTO = userValidator.validateCreate(createUserDTO).join();
+        CompletableFuture<CreateUserDTO> validatedCreateUserDTO = userValidator.validateCreate(createUserDTO);
 
-        return userRepository.create(validatedCreateUserDTO);
-    }
-
-    @Async("asyncExecutor")
-    public CompletableFuture<User> getUserByTelegramId(Long userId) throws NotFoundException {
-
-        User user = userRepository.getUserByTelegramId(userId).join();
-
-        if(user == null){
-            throw new NotFoundException("No user with id = "+ userId);
-        }
+        User user = validatedCreateUserDTO
+                .thenCompose(userData -> userRepository.create(userData)).join();
 
         return CompletableFuture.completedFuture(user);
+    }
+
+    @Async("serviceExecutor")
+    public CompletableFuture<User> getUserByTelegramId(Long userId) {
+
+        return userRepository.getUserByTelegramId(userId);
     }
 
 }

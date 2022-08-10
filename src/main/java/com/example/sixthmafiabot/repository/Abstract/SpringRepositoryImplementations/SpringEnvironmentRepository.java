@@ -8,10 +8,10 @@ import java.util.concurrent.CompletableFuture;
 
 public interface SpringEnvironmentRepository extends Repository<Environment, Long> {
     
-    @Async("asyncExecutor")
+    @Async("repoExecutor")
     void save(Environment env);
 
-    @Async("asyncExecutor")
+    @Async("repoExecutor")
     CompletableFuture<Environment> getEnvironmentByChatId(Long chatId);
 
 }

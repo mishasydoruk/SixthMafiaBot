@@ -4,15 +4,15 @@ import com.example.sixthmafiabot.models.User;
 import org.springframework.data.repository.Repository;
 import org.springframework.scheduling.annotation.Async;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 
 public interface SpringUserRepository extends Repository<User, Long>{
 
-    @Async("asyncExecutor")
+    @Async("repoExecutor")
     void save(User user);
 
-    @Async("asyncExecutor")
+    @Async("repoExecutor")
     CompletableFuture<User> getUserByTelegramId(Long telegramId);
-
 }
