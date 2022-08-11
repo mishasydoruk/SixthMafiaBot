@@ -23,18 +23,21 @@ public class EnvironmentService implements BaseService {
     EnvironmentRepository environmentRepository;
 
     @Async("serviceExecutor")
-    public CompletableFuture<Environment> createEnvironment(CreateEnvironmentDTO env) throws ServiceValidationError {
+    public CompletableFuture<Environment> createEnvironment(CreateEnvironmentDTO createEnvironmentDTO) throws ServiceValidationError {
 
-        CompletableFuture<CreateEnvironmentDTO> validatedEnv = environmentValidator.validateCreate(env);
+        CreateEnvironmentDTO validatedEnv = environmentValidator.validateCreate(createEnvironmentDTO);
 
-        return validatedEnv
-                .thenCompose(valEnv -> environmentRepository.create(valEnv));
+        Environment environment = environmentRepository.create(validatedEnv);
+
+        return CompletableFuture.completedFuture(environment);
     }
 
     @Async("serviceExecutor")
     public CompletableFuture<Environment> getEnvironment(Long chatId) {
 
-        return environmentRepository.getEnvironmentByChatId(chatId);
+        Environment environment = environmentRepository.getEnvironmentByChatId(chatId);
+
+        return CompletableFuture.completedFuture(environment);
     }
 
 }

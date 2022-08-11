@@ -16,19 +16,18 @@ public class EnvironmentRepository extends BaseRepository {
     @Autowired
     SpringEnvironmentRepository springEnvironmentRepository;
 
-    @Async("repoExecutor")
-    public CompletableFuture<Environment> create(CreateEnvironmentDTO createEnvironmentDTO){
+    public Environment create(CreateEnvironmentDTO createEnvironmentDTO){
 
         Environment env = modelMapper.map(createEnvironmentDTO, Environment.class);
 
         springEnvironmentRepository.save(env);
 
-        return CompletableFuture.completedFuture(env);
+        return env;
 
     }
 
     @Async("repoExecutor")
-    public CompletableFuture<Environment> getEnvironmentByChatId(Long chatId){
+    public Environment getEnvironmentByChatId(Long chatId){
 
         return springEnvironmentRepository.getEnvironmentByChatId(chatId);
     }

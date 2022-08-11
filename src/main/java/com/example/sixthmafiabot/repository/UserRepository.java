@@ -19,17 +19,15 @@ public class UserRepository extends BaseRepository {
     @Autowired
     SpringUserRepository springUserRepository;
 
-    @Async("repoExecutor")
-    public CompletableFuture<User> create(CreateUserDTO createUserDTO) {
+    public User create(CreateUserDTO createUserDTO) {
 
         User user = modelMapper.map(createUserDTO, User.class);
 
         springUserRepository.save(user);
-        return CompletableFuture.completedFuture(user);
+        return user;
     }
 
-    @Async("repoExecutor")
-    public CompletableFuture<User> getUserByTelegramId(Long telegramId) {
+    public User getUserByTelegramId(Long telegramId) {
 
         return springUserRepository.getUserByTelegramId(telegramId);
     }

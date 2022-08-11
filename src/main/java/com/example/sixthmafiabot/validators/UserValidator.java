@@ -21,24 +21,20 @@ public class UserValidator extends BaseValidator {
     @Autowired
     UserRepository userRepository;
 
-    @Async("validatorExecutor")
     public void validateCreateUser(CreateUserDTO user) throws ValidationException {
 
         validateDTO(user);
     }
 
-    @Async("validatorExecutor")
     public void validateUpdateUser(UpdateUserDTO user) throws ValidationException {
 
         validateDTO(user);
     }
 
-    @Async("validatorExecutor")
     public void validateIfAlreadyExists(CreateUserDTO user) throws AlreadyExistsException {
 
         boolean alreadyExists =  userRepository
-                .getUserByTelegramId(user.getTelegramId())
-                .join() != null;
+                .getUserByTelegramId(user.getTelegramId()) != null;
 
         if(alreadyExists){
 
@@ -49,8 +45,7 @@ public class UserValidator extends BaseValidator {
         }
     }
 
-    @Async("validatorExecutor")
-    public CompletableFuture<CreateUserDTO> validateCreate(CreateUserDTO createUserDTO) throws ServiceValidationError {
+    public CreateUserDTO validateCreate(CreateUserDTO createUserDTO) throws ServiceValidationError {
 
         try{
             validateIfAlreadyExists(createUserDTO);
@@ -60,7 +55,6 @@ public class UserValidator extends BaseValidator {
 
         }
 
-
         try {
             validateCreateUser(createUserDTO);
         }
@@ -68,12 +62,11 @@ public class UserValidator extends BaseValidator {
             throw new ServiceValidationError(ex.getExceptionMap());
         }
 
-        return CompletableFuture.completedFuture(createUserDTO);
+        return createUserDTO;
     }
 
 
-    @Async("validatorExecutor")
-    public CompletableFuture<UpdateUserDTO> validateUpdate(UpdateUserDTO updateUserDTO) throws ServiceValidationError {
+    public UpdateUserDTO validateUpdate(UpdateUserDTO updateUserDTO) throws ServiceValidationError {
 
         try {
             validateUpdateUser(updateUserDTO);
@@ -82,7 +75,6 @@ public class UserValidator extends BaseValidator {
             throw new ServiceValidationError(ex.getExceptionMap());
         }
 
-        return CompletableFuture.completedFuture(updateUserDTO);
+        return updateUserDTO;
     }
-
 }

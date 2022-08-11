@@ -19,31 +19,27 @@ public class PlayerRepository extends BaseRepository {
     @Autowired
     SpringPlayerRepository springPlayerRepository;
 
-    @Async("repoExecutor")
-    public CompletableFuture<Player> create(CreatePlayerDTO playerDTO){
+    public Player create(CreatePlayerDTO playerDTO){
 
         Player player = modelMapper.map(playerDTO, Player.class);
 
         springPlayerRepository.save(player);
 
-        return CompletableFuture.completedFuture(player);
+        return player;
     }
 
-    @Async("repoExecutor")
-    public CompletableFuture<Player> getPlayerByUser(User user){
+    public Player getPlayerByUser(User user){
 
         return springPlayerRepository.getPlayerByUser(user);
     }
 
-    @Async("repoExecutor")
-    public CompletableFuture<Player> getPlayerByUserTelegramId(Long tgId){
+
+    public Player getPlayerByUserTelegramId(Long tgId){
 
         return springPlayerRepository.findPlayerByUserTelegramId(tgId);
     }
 
-
     @Async("repoExecutor")
-    @Transactional
     public void deletePlayersByGame(Game game){
 
         springPlayerRepository.deletePlayersByGame(game);

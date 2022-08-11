@@ -15,11 +15,10 @@ public interface SpringGameRepository extends Repository<Game, Long> {
     @Transactional
     void save(Game game);
 
-    @Async("repoExecutor")
-    CompletableFuture<Game> getGameByEnvironment(Environment env);
 
-    @Async("repoExecutor")
-    CompletableFuture<Game> findGameByEnvironmentChatId(Long chatId);
+    Game getGameByEnvironment(Environment env);
+
+    Game findGameByEnvironmentChatId(Long chatId);
 
 
     @Async("repoExecutor")

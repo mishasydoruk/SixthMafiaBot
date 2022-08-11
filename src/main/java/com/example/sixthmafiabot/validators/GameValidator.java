@@ -23,14 +23,12 @@ public class GameValidator extends BaseValidator {
     private SpringGameRepository gameRepository;
 
 
-    @Async("validatorExecutor")
     public void validateIfAlreadyExists(CreateGameDTO game)
             throws AlreadyExistsException {
 
 
         boolean gameAlreadyExists = gameRepository
-                .findGameByEnvironmentChatId(game.getEnvironmentId())
-                .join() != null;
+                .findGameByEnvironmentChatId(game.getEnvironmentId()) != null;
 
         if(gameAlreadyExists){
 
@@ -43,20 +41,17 @@ public class GameValidator extends BaseValidator {
 
     }
 
-    @Async("validatorExecutor")
     private void validateCreateGame(CreateGameDTO game) throws ValidationException {
 
         validateDTO(game);
     }
 
-    @Async("validatorExecutor")
     private void validateUpdateGame(UpdateGameDTO game) throws ValidationException {
 
         validateDTO(game);
     }
 
-    @Async("validatorExecutor")
-    public CompletableFuture<CreateGameDTO> validateCreate(CreateGameDTO game) throws ServiceValidationError {
+    public CreateGameDTO validateCreate(CreateGameDTO game) throws ServiceValidationError {
 
         try{
             validateIfAlreadyExists(game);
@@ -74,11 +69,10 @@ public class GameValidator extends BaseValidator {
         }
 
 
-        return CompletableFuture.completedFuture(game);
+        return game;
     }
 
-    @Async("validatorExecutor")
-    public CompletableFuture<UpdateGameDTO> validateUpdate(UpdateGameDTO newGame) throws ServiceValidationError {
+    public UpdateGameDTO validateUpdate(UpdateGameDTO newGame) throws ServiceValidationError {
 
         try {
             validateUpdateGame(newGame);
@@ -87,7 +81,7 @@ public class GameValidator extends BaseValidator {
             throw new ServiceValidationError(ex.getExceptionMap());
         }
 
-        return CompletableFuture.completedFuture(newGame);
+        return newGame;
 
     }
 

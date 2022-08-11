@@ -20,30 +20,25 @@ public class GameRepository extends BaseRepository {
     @Autowired
     SpringGameRepository springGameRepository;
 
-    @Async("repoExecutor")
-    public CompletableFuture<Game> create(CreateGameDTO createGameDTO) {
+    public Game create(CreateGameDTO createGameDTO) {
 
         Game game = modelMapper.map(createGameDTO, Game.class);
 
         springGameRepository.save(game);
 
-        return CompletableFuture.completedFuture(game);
+        return game;
     }
 
-    @Async("repoExecutor")
-    public CompletableFuture<Game> getGameByEnvironment(Environment env){
+    public Game getGameByEnvironment(Environment env){
 
         return springGameRepository.getGameByEnvironment(env);
     }
 
-    @Async("repoExecutor")
-    public CompletableFuture<Game> getGameByEnvironmentChatId(Long chatId){
+    public Game getGameByEnvironmentChatId(Long chatId){
 
         return springGameRepository.findGameByEnvironmentChatId(chatId);
     }
 
-    @Async("repoExecutor")
-    @Transactional
     public void deleteGameByEnvironment(Environment env){
 
         springGameRepository.deleteGameByEnvironment(env);

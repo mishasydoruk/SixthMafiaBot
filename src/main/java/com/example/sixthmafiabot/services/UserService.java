@@ -26,10 +26,9 @@ public class UserService implements BaseService {
     @Async("serviceExecutor")
     public CompletableFuture<User> createUser(CreateUserDTO createUserDTO) throws ServiceValidationError {
 
-        CompletableFuture<CreateUserDTO> validatedCreateUserDTO = userValidator.validateCreate(createUserDTO);
+        CreateUserDTO validatedCreateUserDTO = userValidator.validateCreate(createUserDTO);
 
-        User user = validatedCreateUserDTO
-                .thenCompose(userData -> userRepository.create(userData)).join();
+        User user = userRepository.create(validatedCreateUserDTO);
 
         return CompletableFuture.completedFuture(user);
     }
@@ -37,7 +36,9 @@ public class UserService implements BaseService {
     @Async("serviceExecutor")
     public CompletableFuture<User> getUserByTelegramId(Long userId) {
 
-        return userRepository.getUserByTelegramId(userId);
+        User user = userRepository.getUserByTelegramId(userId);
+
+        return CompletableFuture.completedFuture(user);
     }
 
 }

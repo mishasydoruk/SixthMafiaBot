@@ -13,6 +13,5 @@ public interface SpringUserRepository extends Repository<User, Long>{
     @Async("repoExecutor")
     void save(User user);
 
-    @Async("repoExecutor")
-    CompletableFuture<User> getUserByTelegramId(Long telegramId);
+    User getUserByTelegramId(Long telegramId);
 }

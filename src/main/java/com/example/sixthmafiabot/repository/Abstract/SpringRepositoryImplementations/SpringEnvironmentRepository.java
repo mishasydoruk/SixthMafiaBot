@@ -11,7 +11,7 @@ public interface SpringEnvironmentRepository extends Repository<Environment, Lon
     @Async("repoExecutor")
     void save(Environment env);
 
-    @Async("repoExecutor")
-    CompletableFuture<Environment> getEnvironmentByChatId(Long chatId);
+
+    Environment getEnvironmentByChatId(Long chatId);
 
 }

@@ -25,20 +25,22 @@ public class GameService implements BaseService {
     GameValidator gameValidator;
 
     @Async("serviceExecutor")
-    public CompletableFuture<Game> createGame(CreateGameDTO game) throws ServiceValidationError {
+    public CompletableFuture<Game> createGame(CreateGameDTO createGameDTO) throws ServiceValidationError {
 
-        CompletableFuture<CreateGameDTO> validatedGame = gameValidator.validateCreate(game);
+        CreateGameDTO validatedGame = gameValidator.validateCreate(createGameDTO);
 
-        return validatedGame
-                .thenCompose(valGame -> gameRepository.create(valGame));
+        Game game = gameRepository.create(validatedGame);
+
+        return CompletableFuture.completedFuture(game);
     }
 
 
     @Async("serviceExecutor")
     public CompletableFuture<Game> getGame(Long envId)  {
 
-        return gameRepository.getGameByEnvironmentChatId(envId);
+        Game game = gameRepository.getGameByEnvironmentChatId(envId);
 
+        return CompletableFuture.completedFuture(game);
     }
 
 

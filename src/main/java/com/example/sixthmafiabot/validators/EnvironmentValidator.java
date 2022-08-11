@@ -21,11 +21,10 @@ public class EnvironmentValidator extends BaseValidator {
     @Autowired
     SpringEnvironmentRepository environmentRepository;
 
-    @Async("validatorExecutor")
     public void validateIfAlreadyExists(CreateEnvironmentDTO env) throws AlreadyExistsException {
 
         boolean alreadyExisted = environmentRepository
-                .getEnvironmentByChatId(env.getChatId()).join() != null;
+                .getEnvironmentByChatId(env.getChatId()) != null;
 
         if(alreadyExisted){
             throw new AlreadyExistsException("chatId",
@@ -36,15 +35,13 @@ public class EnvironmentValidator extends BaseValidator {
 
     }
 
-    @Async("validatorExecutor")
     public void validateEnvironment(CreateEnvironmentDTO env)
             throws ValidationException {
 
         validateDTO(env);
     }
 
-    @Async("validatorExecutor")
-    public CompletableFuture<CreateEnvironmentDTO> validateCreate(CreateEnvironmentDTO env) throws ServiceValidationError {
+    public CreateEnvironmentDTO validateCreate(CreateEnvironmentDTO env) throws ServiceValidationError {
 
         try {
             validateEnvironment(env);
@@ -60,6 +57,6 @@ public class EnvironmentValidator extends BaseValidator {
            throw new ServiceValidationError(ex.getField(), ex.getErrorMessage());
        }
 
-       return CompletableFuture.completedFuture(env);
+       return env;
     }
 }

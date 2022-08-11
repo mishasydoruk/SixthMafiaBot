@@ -15,11 +15,9 @@ public interface SpringPlayerRepository extends Repository<Player, Long> {
     @Async("repoExecutor")
     void save(Player player);
 
-    @Async("repoExecutor")
-    CompletableFuture<Player> getPlayerByUser(User user);
+    Player getPlayerByUser(User user);
 
-    @Async("repoExecutor")
-    CompletableFuture<Player> findPlayerByUserTelegramId(Long telegramId);
+   Player findPlayerByUserTelegramId(Long telegramId);
 
 
     @Async("repoExecutor")

@@ -24,7 +24,6 @@ public class AsyncConfig
         return executor;
     }
 
-
     @Bean(name = "serviceExecutor")
     public Executor serviceExecutor()
     {
@@ -33,19 +32,6 @@ public class AsyncConfig
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(10);
         executor.setThreadNamePrefix("AsynchServiceThread-");
-        executor.setKeepAliveSeconds(200);
-        executor.initialize();
-        return executor;
-    }
-
-    @Bean(name = "validatorExecutor")
-    public Executor validatorExecutor()
-    {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(3);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(10);
-        executor.setThreadNamePrefix("AsynchValidatorThread-");
         executor.setKeepAliveSeconds(200);
         executor.initialize();
         return executor;

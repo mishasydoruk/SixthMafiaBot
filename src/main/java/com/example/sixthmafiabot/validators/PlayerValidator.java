@@ -19,31 +19,24 @@ public class PlayerValidator extends BaseValidator {
     @Autowired
     PlayerRepository playerRepository;
 
-    @Async("validatorExecutor")
     public void validateCreatePlayerDTO(CreatePlayerDTO player)
             throws ValidationException {
 
         validateDTO(player);
     }
 
-    @Async("validatorExecutor")
     public void validateUpdatePlayerDTO(UpdatePlayerDTO player)
             throws ValidationException {
 
         validateDTO(player);
     }
 
-    @Async("validatorExecutor")
     public void validateIfAlreadyExists(CreatePlayerDTO player) throws AlreadyExistsException {
 
         boolean alreadyExists = playerRepository
-                .getPlayerByUserTelegramId(
-                        player.getTelegramId()
-                )
-                .join() != null;
+                .getPlayerByUserTelegramId(player.getTelegramId()) != null;
 
         if(alreadyExists){
-
             throw new AlreadyExistsException("telegramId",
                     "Player with user identifier = %s already created"
                     .formatted(player.getTelegramId())
@@ -51,8 +44,7 @@ public class PlayerValidator extends BaseValidator {
         }
     }
 
-    @Async("validatorExecutor")
-    public CompletableFuture<CreatePlayerDTO> validateCreate(CreatePlayerDTO player) throws ServiceValidationError {
+    public CreatePlayerDTO validateCreate(CreatePlayerDTO player) throws ServiceValidationError {
 
         try{
             validateIfAlreadyExists(player);
@@ -69,11 +61,10 @@ public class PlayerValidator extends BaseValidator {
             throw new ServiceValidationError(ex.getExceptionMap());
         }
 
-        return CompletableFuture.completedFuture(player);
+        return player;
     }
 
-    @Async("validatorExecutor")
-    public CompletableFuture<UpdatePlayerDTO> validateUpdate(UpdatePlayerDTO player) throws ServiceValidationError {
+    public UpdatePlayerDTO validateUpdate(UpdatePlayerDTO player) throws ServiceValidationError {
 
         try {
             validateUpdatePlayerDTO(player);
@@ -82,7 +73,7 @@ public class PlayerValidator extends BaseValidator {
             throw new ServiceValidationError(ex.getExceptionMap());
         }
 
-        return CompletableFuture.completedFuture(player);
+        return player;
 
     }
 

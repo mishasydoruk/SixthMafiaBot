@@ -25,19 +25,20 @@ public class PlayerService implements BaseService {
     PlayerValidator playerValidator;
 
     @Async("serviceExecutor")
-    public CompletableFuture<Player> createPlayer(CreatePlayerDTO player) throws ServiceValidationError {
+    public CompletableFuture<Player> createPlayer(CreatePlayerDTO createPlayerDTO) throws ServiceValidationError {
 
-        CompletableFuture<CreatePlayerDTO> validatedPlayer = playerValidator.validateCreate(player);
+       CreatePlayerDTO validatedPlayer = playerValidator.validateCreate(createPlayerDTO);
 
-        return validatedPlayer
-                .thenCompose(valPlayer -> playerRepository.create(valPlayer));
+       Player player = playerRepository.create(validatedPlayer);
 
+        return CompletableFuture.completedFuture(player);
     }
 
     @Async("serviceExecutor")
     public CompletableFuture<Player> getPlayerByUserId(Long userTelegramId)  {
 
-        return playerRepository.getPlayerByUserTelegramId(userTelegramId);
+        Player player = playerRepository.getPlayerByUserTelegramId(userTelegramId);
+        return CompletableFuture.completedFuture(player);
     }
 
 }
