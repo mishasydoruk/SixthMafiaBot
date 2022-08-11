@@ -1,8 +1,9 @@
 package com.example.sixthmafiabot.services;
 
 import com.example.sixthmafiabot.DTO.CreateGameDTO;
+import com.example.sixthmafiabot.DTO.UpdateGameDTO;
+import com.example.sixthmafiabot.DTO.UpdateUserDTO;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
-import com.example.sixthmafiabot.models.Environment;
 import com.example.sixthmafiabot.models.Game;
 import com.example.sixthmafiabot.repository.GameRepository;
 import com.example.sixthmafiabot.services.Abstract.BaseService;
@@ -34,6 +35,16 @@ public class GameService implements BaseService {
         return CompletableFuture.completedFuture(game);
     }
 
+    @Async("serviceExecutor")
+    public CompletableFuture<Game> updateGame(Game gameInDatabase, UpdateGameDTO updateGameDTO) throws ServiceValidationError {
+
+        UpdateGameDTO validatedUpdateGameDTO = gameValidator.validateUpdate(updateGameDTO);
+
+        Game updatedGame = gameRepository.update(gameInDatabase, updateGameDTO);
+
+        return CompletableFuture.completedFuture(updatedGame);
+    }
+
 
     @Async("serviceExecutor")
     public CompletableFuture<Game> getGame(Long envId)  {
@@ -42,6 +53,4 @@ public class GameService implements BaseService {
 
         return CompletableFuture.completedFuture(game);
     }
-
-
 }

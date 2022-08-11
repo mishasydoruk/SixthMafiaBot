@@ -2,11 +2,12 @@ package com.example.sixthmafiabot.DTO;
 
 import com.example.sixthmafiabot.DTO.Abstract.BaseDTO;
 import com.example.sixthmafiabot.enums.GameStatus;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
+@Getter
+@Setter
 public class UpdateGameDTO implements BaseDTO {
-
 
     private GameStatus gameStatus;
 }

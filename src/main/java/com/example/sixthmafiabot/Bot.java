@@ -55,28 +55,5 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        Message requestMessage = update.getMessage();
-
-        Long chatId = requestMessage.getChatId();
-
-        if(Objects.equals(requestMessage.getText(), "/save")){
-
-            CreateUserDTO createUserDTO = new CreateUserDTO();
-
-            log.info("Update from "+requestMessage);
-
-            createUserDTO.setUsername(requestMessage.getFrom().getFirstName());
-            createUserDTO.setTelegramId(requestMessage.getFrom().getId());
-
-            try {
-                User created = userService.createUser(createUserDTO).join();
-            }
-            catch (CompletionException ex){
-                log.warn(ex.getMessage());
-            }
-        }
-
     }
-
-
 }

@@ -7,7 +7,6 @@ import org.springframework.data.repository.Repository;
 import org.springframework.scheduling.annotation.Async;
 
 import javax.transaction.Transactional;
-import java.util.concurrent.CompletableFuture;
 
 public interface SpringGameRepository extends Repository<Game, Long> {
 

@@ -1,6 +1,7 @@
 package com.example.sixthmafiabot.repository;
 
 import com.example.sixthmafiabot.DTO.CreatePlayerDTO;
+import com.example.sixthmafiabot.DTO.UpdatePlayerDTO;
 import com.example.sixthmafiabot.models.Game;
 import com.example.sixthmafiabot.models.Player;
 import com.example.sixthmafiabot.models.User;
@@ -9,9 +10,6 @@ import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementat
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
-
-import javax.transaction.Transactional;
-import java.util.concurrent.CompletableFuture;
 
 @Repository
 public class PlayerRepository extends BaseRepository {
@@ -26,6 +24,15 @@ public class PlayerRepository extends BaseRepository {
         springPlayerRepository.save(player);
 
         return player;
+    }
+
+    public Player update(Player playerInDatabase, UpdatePlayerDTO updatePlayerDTO){
+
+        playerInDatabase.setIsAlive(updatePlayerDTO.isAlive());
+
+        springPlayerRepository.save(playerInDatabase);
+
+        return playerInDatabase;
     }
 
     public Player getPlayerByUser(User user){

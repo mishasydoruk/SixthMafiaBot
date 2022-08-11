@@ -1,6 +1,6 @@
 package com.example.sixthmafiabot.validators.Abstract;
 
-import com.example.sixthmafiabot.exceptions.ValidationException;
+import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 
 import javax.validation.ConstraintViolation;
@@ -18,7 +18,7 @@ public abstract class BaseValidator {
 
 
 
-    protected <T> void validateDTO(T modelDTO) throws ValidationException {
+    protected <T> void validateDTO(T modelDTO) throws ServiceValidationError {
 
         Set<ConstraintViolation<T>> violations =
                 validator.validate(modelDTO);
@@ -36,7 +36,7 @@ public abstract class BaseValidator {
                         next.getMessage()
                 );
 
-                throw new ValidationException(exceptionMap);
+                throw new ServiceValidationError(exceptionMap);
             }
         }
 

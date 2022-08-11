@@ -3,12 +3,10 @@ package com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementa
 import com.example.sixthmafiabot.models.Game;
 import com.example.sixthmafiabot.models.Player;
 import com.example.sixthmafiabot.models.User;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.scheduling.annotation.Async;
 
 import javax.transaction.Transactional;
-import java.util.concurrent.CompletableFuture;
 
 public interface SpringPlayerRepository extends Repository<Player, Long> {
 
@@ -17,8 +15,7 @@ public interface SpringPlayerRepository extends Repository<Player, Long> {
 
     Player getPlayerByUser(User user);
 
-   Player findPlayerByUserTelegramId(Long telegramId);
-
+    Player findPlayerByUserTelegramId(Long telegramId);
 
     @Async("repoExecutor")
     @Transactional

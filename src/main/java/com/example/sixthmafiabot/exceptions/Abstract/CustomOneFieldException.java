@@ -9,7 +9,6 @@ public  abstract class CustomOneFieldException extends BaseCustomException{
     protected final String errorMessage;
 
     public CustomOneFieldException(String field, String errorMessage) {
-        super(field+": " +errorMessage);
 
         this.field = field;
         this.errorMessage = errorMessage;

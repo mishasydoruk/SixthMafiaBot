@@ -1,6 +1,5 @@
 package com.example.sixthmafiabot.exceptions;
 
-import com.example.sixthmafiabot.exceptions.Abstract.BaseCustomException;
 import com.example.sixthmafiabot.exceptions.Abstract.CustomOneFieldException;
 
 public class AlreadyExistsException extends CustomOneFieldException {

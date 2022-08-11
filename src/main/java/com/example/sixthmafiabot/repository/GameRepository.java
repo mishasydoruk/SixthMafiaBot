@@ -1,18 +1,13 @@
 package com.example.sixthmafiabot.repository;
 
 import com.example.sixthmafiabot.DTO.CreateGameDTO;
-import com.example.sixthmafiabot.DTO.CreateUserDTO;
+import com.example.sixthmafiabot.DTO.UpdateGameDTO;
 import com.example.sixthmafiabot.models.Environment;
 import com.example.sixthmafiabot.models.Game;
-import com.example.sixthmafiabot.models.User;
 import com.example.sixthmafiabot.repository.Abstract.BaseRepository;
 import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringGameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
-
-import javax.transaction.Transactional;
-import java.util.concurrent.CompletableFuture;
 
 @Repository
 public class GameRepository extends BaseRepository {
@@ -27,6 +22,15 @@ public class GameRepository extends BaseRepository {
         springGameRepository.save(game);
 
         return game;
+    }
+
+    public Game update(Game gameInDatabase, UpdateGameDTO updateGameDTO){
+
+        gameInDatabase.setGameStatus(updateGameDTO.getGameStatus());
+
+        springGameRepository.save(gameInDatabase);
+
+        return gameInDatabase;
     }
 
     public Game getGameByEnvironment(Environment env){

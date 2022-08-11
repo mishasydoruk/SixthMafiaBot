@@ -11,8 +11,6 @@ public abstract class CustomMapException extends BaseCustomException{
 
     public CustomMapException(Map<String, String> exceptionMap) {
 
-        super(exceptionMap.toString());
-
         this.exceptionMap = exceptionMap;
     }
 }

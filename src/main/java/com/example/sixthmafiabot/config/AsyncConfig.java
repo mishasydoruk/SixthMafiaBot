@@ -11,15 +11,26 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AsyncConfig
 {
+
+    private final Integer repoCorePoolSize = 5;
+    private final Integer repoMaxPoolSize = 10;
+    private final Integer repoQueueCapacity = 100;
+    private final Integer repoKeepAliveSeconds = 200;
+
+    private final Integer serviceCorePoolSize = 10;
+    private final Integer serviceMaxPoolSize = 10;
+    private final Integer serviceQueueCapacity = 100;
+    private final Integer serviceKeepAliveSeconds = 200;
+
     @Bean(name = "repoExecutor")
     public Executor repoExecutor()
     {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(10);
+        executor.setCorePoolSize(repoCorePoolSize);
+        executor.setMaxPoolSize(repoMaxPoolSize);
+        executor.setQueueCapacity(repoQueueCapacity);
         executor.setThreadNamePrefix("AsynchRepoThread-");
-        executor.setKeepAliveSeconds(200);
+        executor.setKeepAliveSeconds(repoKeepAliveSeconds);
         executor.initialize();
         return executor;
     }
@@ -28,11 +39,11 @@ public class AsyncConfig
     public Executor serviceExecutor()
     {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(10);
+        executor.setCorePoolSize(serviceCorePoolSize);
+        executor.setMaxPoolSize(serviceMaxPoolSize);
+        executor.setQueueCapacity(serviceQueueCapacity);
         executor.setThreadNamePrefix("AsynchServiceThread-");
-        executor.setKeepAliveSeconds(200);
+        executor.setKeepAliveSeconds(serviceKeepAliveSeconds);
         executor.initialize();
         return executor;
     }
