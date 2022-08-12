@@ -16,7 +16,7 @@ public class EnvironmentValidator extends BaseValidator {
     @Autowired
     EnvironmentRepository environmentRepository;
 
-    public void alreadyExists(CreateEnvironmentDTO env) throws AlreadyExistsException {
+    public void validateAlreadyExists(CreateEnvironmentDTO env) throws AlreadyExistsException {
 
         boolean alreadyExists = environmentRepository
                 .getEnvironmentByChatId(env.getChatId()) != null;
@@ -29,17 +29,12 @@ public class EnvironmentValidator extends BaseValidator {
         }
     }
 
-    public void validateEnvironment(CreateEnvironmentDTO env) throws ServiceValidationError {
-
-        validateDTO(env);
-    }
-
     public CreateEnvironmentDTO validateCreate(CreateEnvironmentDTO env) throws ServiceValidationError {
 
-        validateEnvironment(env);
+        validateDTO(env);
 
        try {
-           alreadyExists(env);
+           validateAlreadyExists(env);
        }
        catch (AlreadyExistsException ex){
            throw new ServiceValidationError(ex.getField(), ex.getErrorMessage());

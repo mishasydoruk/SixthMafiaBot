@@ -17,17 +17,8 @@ public class UserValidator extends BaseValidator {
     @Autowired
     UserRepository userRepository;
 
-    public void validateCreateUser(CreateUserDTO user) throws ServiceValidationError {
 
-        validateDTO(user);
-    }
-
-    public void validateUpdateUser(UpdateUserDTO user) throws ServiceValidationError {
-
-        validateDTO(user);
-    }
-
-    public void alreadyExists(CreateUserDTO user) throws AlreadyExistsException {
+    public void validateAlreadyExists(CreateUserDTO user) throws AlreadyExistsException {
 
         boolean alreadyExists =  userRepository
                 .getUserByTelegramId(user.getTelegramId()) != null;
@@ -44,14 +35,14 @@ public class UserValidator extends BaseValidator {
     public CreateUserDTO validateCreate(CreateUserDTO createUserDTO) throws ServiceValidationError {
 
         try{
-            alreadyExists(createUserDTO);
+            validateAlreadyExists(createUserDTO);
         }
         catch (AlreadyExistsException ex){
             throw new ServiceValidationError(ex.getField(), ex.getErrorMessage());
 
         }
 
-        validateCreateUser(createUserDTO);
+        validateDTO(createUserDTO);
 
         return createUserDTO;
     }
@@ -59,7 +50,7 @@ public class UserValidator extends BaseValidator {
 
     public UpdateUserDTO validateUpdate(UpdateUserDTO updateUserDTO) throws ServiceValidationError {
 
-        validateUpdateUser(updateUserDTO);
+        validateDTO(updateUserDTO);
 
         return updateUserDTO;
     }

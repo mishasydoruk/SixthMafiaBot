@@ -26,7 +26,7 @@ public class GameRepository extends BaseRepository {
 
     public Game update(Game gameInDatabase, UpdateGameDTO updateGameDTO){
 
-        gameInDatabase.setGameStatus(updateGameDTO.getGameStatus());
+        modelMapper.map(updateGameDTO, gameInDatabase);
 
         springGameRepository.save(gameInDatabase);
 

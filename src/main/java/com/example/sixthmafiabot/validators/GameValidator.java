@@ -15,7 +15,7 @@ public class GameValidator extends BaseValidator {
     @Autowired
     private GameRepository gameRepository;
 
-    public void alreadyExists(CreateGameDTO game)
+    public void validateAlreadyExists(CreateGameDTO game)
             throws AlreadyExistsException {
 
 
@@ -32,33 +32,23 @@ public class GameValidator extends BaseValidator {
         }
     }
 
-    private void validateCreateGame(CreateGameDTO game) throws ServiceValidationError {
-
-        validateDTO(game);
-    }
-
-    private void validateUpdateGame(UpdateGameDTO game) throws ServiceValidationError {
-
-        validateDTO(game);
-    }
-
     public CreateGameDTO validateCreate(CreateGameDTO game) throws ServiceValidationError {
 
         try{
-            alreadyExists(game);
+            validateAlreadyExists(game);
         }
         catch (AlreadyExistsException ex){
             throw new ServiceValidationError(ex.getField(), ex.getErrorMessage());
         }
 
-        validateCreateGame(game);
+        validateDTO(game);
 
         return game;
     }
 
     public UpdateGameDTO validateUpdate(UpdateGameDTO newGame) throws ServiceValidationError {
 
-        validateUpdateGame(newGame);
+        validateDTO(newGame);
 
         return newGame;
     }

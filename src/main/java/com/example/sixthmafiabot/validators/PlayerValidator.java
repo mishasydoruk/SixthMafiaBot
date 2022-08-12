@@ -15,17 +15,7 @@ public class PlayerValidator extends BaseValidator {
     @Autowired
     PlayerRepository playerRepository;
 
-    public void validateCreatePlayerDTO(CreatePlayerDTO player) throws ServiceValidationError {
-
-        validateDTO(player);
-    }
-
-    public void validateUpdatePlayerDTO(UpdatePlayerDTO player) throws ServiceValidationError {
-
-        validateDTO(player);
-    }
-
-    public void alreadyExists(CreatePlayerDTO player) throws AlreadyExistsException {
+    public void validateAlreadyExists(CreatePlayerDTO player) throws AlreadyExistsException {
 
         boolean alreadyExists = playerRepository
                 .getPlayerByUserTelegramId(player.getTelegramId()) != null;
@@ -41,21 +31,21 @@ public class PlayerValidator extends BaseValidator {
     public CreatePlayerDTO validateCreate(CreatePlayerDTO player) throws ServiceValidationError {
 
         try{
-            alreadyExists(player);
+            validateAlreadyExists(player);
         }
 
         catch (AlreadyExistsException ex){
             throw new ServiceValidationError(ex.getField(), ex.getErrorMessage());
         }
 
-        validateCreatePlayerDTO(player);
+        validateDTO(player);
 
         return player;
     }
 
     public UpdatePlayerDTO validateUpdate(UpdatePlayerDTO player) throws ServiceValidationError {
 
-        validateUpdatePlayerDTO(player);
+        validateDTO(player);
 
         return player;
     }

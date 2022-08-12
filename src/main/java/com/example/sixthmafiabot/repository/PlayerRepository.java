@@ -28,7 +28,7 @@ public class PlayerRepository extends BaseRepository {
 
     public Player update(Player playerInDatabase, UpdatePlayerDTO updatePlayerDTO){
 
-        playerInDatabase.setIsAlive(updatePlayerDTO.isAlive());
+        modelMapper.map(updatePlayerDTO, playerInDatabase);
 
         springPlayerRepository.save(playerInDatabase);
 

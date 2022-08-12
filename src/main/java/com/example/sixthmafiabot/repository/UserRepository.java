@@ -31,7 +31,7 @@ public class UserRepository extends BaseRepository {
 
     public User update(User userInDatabase, UpdateUserDTO updateUserDTO){
 
-        userInDatabase.setUsername(updateUserDTO.getUsername());
+        modelMapper.map(updateUserDTO, userInDatabase);
 
         springUserRepository.save(userInDatabase);
 
