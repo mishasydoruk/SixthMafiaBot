@@ -11,7 +11,6 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AsyncConfig
 {
-
     private final Integer repoCorePoolSize = 5;
     private final Integer repoMaxPoolSize = 10;
     private final Integer repoQueueCapacity = 100;

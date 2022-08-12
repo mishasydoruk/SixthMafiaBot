@@ -37,9 +37,6 @@ public class Bot extends TelegramLongPollingBot {
     @Autowired
     UserService userService;
 
-    @Autowired
-    SpringEnvironmentRepository environmentService;
-
     ExecutorService service = Executors.newFixedThreadPool(10);
 
     public Bot(TelegramBotsApi telegramBotsApi,
