@@ -7,6 +7,8 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users")
@@ -14,10 +16,12 @@ import javax.persistence.Table;
 @Setter
 public class User extends BaseModel {
 
+    @NotNull @NotBlank
     @Column(name = "username")
     String username;
 
+    @NotNull
     @Column(name = "telegram_id")
-    Long telegramId;
+    private Long telegramId;
 
 }

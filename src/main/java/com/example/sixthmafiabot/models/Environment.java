@@ -16,16 +16,8 @@ public class Environment extends BaseModel {
     @Column(name = "chat_id")
     private Long chatId;
 
-    @OneToOne(mappedBy="enviromnent")
+    @OneToOne
+    @JoinColumn(name = "game_id")
     private Game game;
 
-
-    public Environment(Long chatId){
-
-        this.chatId = chatId;
-    }
-
-    protected Environment() {
-
-    }
 }

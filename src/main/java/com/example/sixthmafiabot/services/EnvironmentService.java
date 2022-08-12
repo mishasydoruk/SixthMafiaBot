@@ -1,12 +1,13 @@
 package com.example.sixthmafiabot.services;
 
-import com.example.sixthmafiabot.exceptions.NotFoundException;
+import com.example.sixthmafiabot.DTO.CreateEnvironmentDTO;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
 import com.example.sixthmafiabot.models.Environment;
 import com.example.sixthmafiabot.repository.EnvironmentRepository;
 import com.example.sixthmafiabot.services.Abstract.BaseService;
 import com.example.sixthmafiabot.validators.EnvironmentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -21,42 +22,22 @@ public class EnvironmentService implements BaseService {
     @Autowired
     EnvironmentRepository environmentRepository;
 
-    public CompletableFuture<Environment> createEnvironment(Environment env) throws ServiceValidationError {
+    @Async("serviceExecutor")
+    public CompletableFuture<Environment> createEnvironment(CreateEnvironmentDTO createEnvironmentDTO) throws ServiceValidationError {
 
-        Environment validatedEnvironment = environmentValidator.validateCreate(env).join();
+        CreateEnvironmentDTO validatedEnv = environmentValidator.validateCreate(createEnvironmentDTO);
 
-        environmentRepository.save(validatedEnvironment);
+        Environment environment = environmentRepository.create(validatedEnv);
 
-        return CompletableFuture.completedFuture(validatedEnvironment);
-
+        return CompletableFuture.completedFuture(environment);
     }
 
-    public CompletableFuture<Environment> getEnvironment(Long chatId) throws NotFoundException {
+    @Async("serviceExecutor")
+    public CompletableFuture<Environment> getEnvironment(Long chatId) {
 
-        Environment env = environmentRepository.getEnvironmentByChatId(chatId).join();
+        Environment environment = environmentRepository.getEnvironmentByChatId(chatId);
 
-        if(env == null){
-
-            throw new NotFoundException("No environment with chatId = " +chatId);
-        }
-
-        return CompletableFuture.completedFuture(env);
+        return CompletableFuture.completedFuture(environment);
     }
 
-    public CompletableFuture<Environment> getOrCreateIfNotExists(Long chatId) throws ServiceValidationError {
-
-        CompletableFuture<Environment> envToReturn;
-
-        try{
-
-            envToReturn = getEnvironment(chatId);
-        }
-        catch (NotFoundException ex){
-
-            Environment env = new Environment(chatId);
-            envToReturn = createEnvironment(env);
-        }
-
-        return envToReturn;
-    }
 }

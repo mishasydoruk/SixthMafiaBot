@@ -1,10 +1,19 @@
 package com.example.sixthmafiabot.exceptions;
 
-import com.example.sixthmafiabot.exceptions.Abstract.BaseCustomException;
+import com.example.sixthmafiabot.exceptions.Abstract.CustomMapException;
 
-public class ServiceValidationError extends BaseCustomException {
+import java.util.Map;
 
-    public ServiceValidationError(String msg) {
-        super(msg);
+public class ServiceValidationError extends CustomMapException {
+
+
+    public ServiceValidationError(String field, String message) {
+        super(Map.of(field, message));
     }
+
+    public ServiceValidationError(Map<String, String> exceptionMap){
+
+        super(exceptionMap);
+    }
+
 }

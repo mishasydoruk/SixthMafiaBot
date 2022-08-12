@@ -1,19 +1,43 @@
 package com.example.sixthmafiabot.repository;
 
+import com.example.sixthmafiabot.DTO.CreateUserDTO;
+import com.example.sixthmafiabot.DTO.UpdateUserDTO;
 import com.example.sixthmafiabot.models.User;
-import org.springframework.data.repository.Repository;
-import org.springframework.scheduling.annotation.Async;
+import com.example.sixthmafiabot.repository.Abstract.BaseRepository;
+import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringUserRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
-import java.util.concurrent.CompletableFuture;
+@Repository
+@Slf4j
+public class UserRepository extends BaseRepository {
+
+    @Autowired
+    SpringUserRepository springUserRepository;
+
+    public User create(CreateUserDTO createUserDTO) {
+
+        User user = modelMapper.map(createUserDTO, User.class);
+
+        springUserRepository.save(user);
+        return user;
+    }
+
+    public User getUserByTelegramId(Long telegramId) {
+
+        return springUserRepository.getUserByTelegramId(telegramId);
+    }
+
+    public User update(User userInDatabase, UpdateUserDTO updateUserDTO){
+
+        modelMapper.map(updateUserDTO, userInDatabase);
+
+        springUserRepository.save(userInDatabase);
+
+        return userInDatabase;
+    }
 
 
-public interface UserRepository extends Repository<User, Long> {
-
-
-    @Async("asyncExecutor")
-    void save(User user);
-
-    @Async("asyncExecutor")
-    CompletableFuture<User> getUserByTelegramId(Long telegramId);
 
 }

@@ -29,20 +29,14 @@ public class Game extends BaseModel {
     @NotNull @Column(name = "registration_start_time")
     private final LocalDateTime registrationStartTime;
 
+    public Game(Environment environment, LocalDateTime registrationStartTime){
 
-    public Game(Environment environment){
         this.environment = environment;
-        registrationStartTime = LocalDateTime.now();
+        this.registrationStartTime = registrationStartTime;
     }
 
     protected Game() {
-        this.environment = new Environment(0L);
-        this.registrationStartTime = LocalDateTime.now();
-    }
-
-    public void update(Game newGame){
-        this.players = newGame.players;
-        this.gameStatus = newGame.gameStatus;
-
+        this.environment = null;
+        this.registrationStartTime = null;
     }
 }

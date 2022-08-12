@@ -1,17 +1,32 @@
 package com.example.sixthmafiabot.repository;
 
+import com.example.sixthmafiabot.DTO.CreateEnvironmentDTO;
 import com.example.sixthmafiabot.models.Environment;
-import org.springframework.data.repository.Repository;
+import com.example.sixthmafiabot.repository.Abstract.BaseRepository;
+import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringEnvironmentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Repository;
 
-import java.util.concurrent.CompletableFuture;
+@Repository
+public class EnvironmentRepository extends BaseRepository {
 
-public interface EnvironmentRepository extends Repository<Environment, Long> {
+    @Autowired
+    SpringEnvironmentRepository springEnvironmentRepository;
 
-    @Async("asyncExecutor")
-    void save(Environment env);
+    public Environment create(CreateEnvironmentDTO createEnvironmentDTO){
 
-    @Async("asyncExecutor")
-    CompletableFuture<Environment> getEnvironmentByChatId(Long chatId);
+        Environment env = modelMapper.map(createEnvironmentDTO, Environment.class);
 
+        springEnvironmentRepository.save(env);
+
+        return env;
+
+    }
+
+    @Async("repoExecutor")
+    public Environment getEnvironmentByChatId(Long chatId){
+
+        return springEnvironmentRepository.getEnvironmentByChatId(chatId);
+    }
 }

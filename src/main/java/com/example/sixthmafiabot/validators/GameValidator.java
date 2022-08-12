@@ -1,22 +1,13 @@
 package com.example.sixthmafiabot.validators;
 
-import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
+import com.example.sixthmafiabot.DTO.CreateGameDTO;
+import com.example.sixthmafiabot.DTO.UpdateGameDTO;
+import com.example.sixthmafiabot.exceptions.AlreadyExistsException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
-import com.example.sixthmafiabot.models.Environment;
-import com.example.sixthmafiabot.models.Game;
 import com.example.sixthmafiabot.repository.GameRepository;
 import com.example.sixthmafiabot.validators.Abstract.BaseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 @Component
 public class GameValidator extends BaseValidator {
@@ -24,70 +15,42 @@ public class GameValidator extends BaseValidator {
     @Autowired
     private GameRepository gameRepository;
 
+    public void validateAlreadyExists(CreateGameDTO game)
+            throws AlreadyExistsException {
 
-    public void validateIfAlreadyExists(Environment env) throws AlreadyExistsExcepeion {
 
-        boolean gameAlreadyExists = gameRepository.getGameByEnvironment(env).join()!=null;
+        boolean gameAlreadyExists = gameRepository
+                .getGameByEnvironmentChatId(game.getEnvironmentId()) != null;
 
         if(gameAlreadyExists){
-            throw new AlreadyExistsExcepeion("Game already created in environment with id="+env.getChatId());
+
+            throw new AlreadyExistsException(
+                    "environmentId",
+                    "Game already created in environment with id="
+                            + game.getEnvironmentId()
+            );
         }
     }
 
-
-    private void validateGame(Game game) throws ValidationException{
-
-        Set<ConstraintViolation<Game>> violations =
-                validator.validate(game);
-
-        if (!violations.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (ConstraintViolation<Game> constraintViolation : violations) {
-                sb.append(constraintViolation.getMessage());
-            }
-            throw new  ValidationException("Error occurred: " + sb.toString());
-        }
-    }
-
-
-    @Async("asyncExecutor")
-    public CompletableFuture<Game> validateCreate(Environment env) throws ServiceValidationError {
+    public CreateGameDTO validateCreate(CreateGameDTO game) throws ServiceValidationError {
 
         try{
-            validateIfAlreadyExists(env);
+            validateAlreadyExists(game);
         }
-        catch (AlreadyExistsExcepeion ex){
-            throw new ServiceValidationError(ex.getMessage());
-        }
-
-        Game gameToCreate = new Game(env);
-
-        try {
-            validateGame(gameToCreate);
-        }
-        catch (ValidationException ex){
-            throw new ServiceValidationError(ex.getMessage());
+        catch (AlreadyExistsException ex){
+            throw new ServiceValidationError(ex.getField(), ex.getErrorMessage());
         }
 
+        validateDTO(game);
 
-        return CompletableFuture.completedFuture(gameToCreate);
+        return game;
     }
 
-    @Async("asyncExecutor")
-    public CompletableFuture<Game> validateUpdate(Game newGame) throws ServiceValidationError {
+    public UpdateGameDTO validateUpdate(UpdateGameDTO newGame) throws ServiceValidationError {
 
-        try {
-            validateGame(newGame);
-        }
-        catch (ValidationException ex){
-            throw new ServiceValidationError(ex.getMessage());
-        }
+        validateDTO(newGame);
 
-        return CompletableFuture.completedFuture(newGame);
-
+        return newGame;
     }
-
-
-
 
 }

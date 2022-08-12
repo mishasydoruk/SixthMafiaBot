@@ -1,86 +1,57 @@
 package com.example.sixthmafiabot.validators;
 
-import com.example.sixthmafiabot.exceptions.AlreadyExistsExcepeion;
+import com.example.sixthmafiabot.DTO.CreateUserDTO;
+import com.example.sixthmafiabot.DTO.UpdateUserDTO;
+import com.example.sixthmafiabot.exceptions.AlreadyExistsException;
 import com.example.sixthmafiabot.exceptions.ServiceValidationError;
-import com.example.sixthmafiabot.models.Game;
-import com.example.sixthmafiabot.models.User;
 import com.example.sixthmafiabot.repository.UserRepository;
 import com.example.sixthmafiabot.validators.Abstract.BaseValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ValidationException;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-
 @Component
+@Slf4j
 public class UserValidator extends BaseValidator {
 
     @Autowired
     UserRepository userRepository;
 
-    @Async("asyncExecutor")
-    public void validateUser(User user) throws ValidationException{
-        Set<ConstraintViolation<User>> violations =
-                validator.validate(user);
 
-        if (!violations.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (ConstraintViolation<User> constraintViolation : violations) {
-                sb.append(constraintViolation.getMessage());
-            }
-            throw new ValidationException("Error occurred: " + sb.toString());
-        }
-    }
-
-    @Async("asyncExecutor")
-    public void validateIfAlreadyExists(User user) throws AlreadyExistsExcepeion {
+    public void validateAlreadyExists(CreateUserDTO user) throws AlreadyExistsException {
 
         boolean alreadyExists =  userRepository
-                .getUserByTelegramId(user.getTelegramId())
-                .join() != null;
+                .getUserByTelegramId(user.getTelegramId()) != null;
 
         if(alreadyExists){
-            throw new AlreadyExistsExcepeion("User with identifier = %s already exists"
+
+            throw new AlreadyExistsException("telegramId",
+                    "User with identifier = %s already exists"
                     .formatted(user.getTelegramId())
             );
         }
-
     }
 
-    @Async("asyncExecutor")
-    public CompletableFuture<User> validateCreate(User user) throws ServiceValidationError {
+    public CreateUserDTO validateCreate(CreateUserDTO createUserDTO) throws ServiceValidationError {
 
         try{
-            validateIfAlreadyExists(user);
+            validateAlreadyExists(createUserDTO);
         }
-        catch (AlreadyExistsExcepeion ex){
-            throw new ServiceValidationError(ex.getMessage());
+        catch (AlreadyExistsException ex){
+            throw new ServiceValidationError(ex.getField(), ex.getErrorMessage());
+
         }
 
-        try {
-            validateUser(user);
-        }
-        catch (ValidationException ex){
-            throw new ServiceValidationError(ex.getMessage());
-        }
+        validateDTO(createUserDTO);
 
-        return CompletableFuture.completedFuture(user);
+        return createUserDTO;
     }
 
-    @Async("asyncExecutor")
-    public CompletableFuture<User> validateUpdate(User user) throws ServiceValidationError {
 
-        try {
-            validateUser(user);
-        }
-        catch (ValidationException ex){
-            throw new ServiceValidationError(ex.getMessage());
-        }
+    public UpdateUserDTO validateUpdate(UpdateUserDTO updateUserDTO) throws ServiceValidationError {
 
-        return CompletableFuture.completedFuture(user);
+        validateDTO(updateUserDTO);
+
+        return updateUserDTO;
     }
-
 }

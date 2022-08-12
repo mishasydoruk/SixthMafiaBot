@@ -1,9 +1,10 @@
 package com.example.sixthmafiabot;
 
-import com.example.sixthmafiabot.models.Environment;
-import com.example.sixthmafiabot.repository.EnvironmentRepository;
-import com.example.sixthmafiabot.services.EnvironmentService;
+import com.example.sixthmafiabot.DTO.CreateUserDTO;
+import com.example.sixthmafiabot.models.User;
+import com.example.sixthmafiabot.repository.Abstract.SpringRepositoryImplementations.SpringEnvironmentRepository;
 import com.example.sixthmafiabot.services.GameService;
+import com.example.sixthmafiabot.services.UserService;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -11,17 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Getter
@@ -36,7 +35,7 @@ public class Bot extends TelegramLongPollingBot {
     GameService gameService;
 
     @Autowired
-    EnvironmentRepository environmentService;
+    UserService userService;
 
     ExecutorService service = Executors.newFixedThreadPool(10);
 
@@ -53,13 +52,5 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        Message requestMessage = update.getMessage();
-
-        Long chatId = requestMessage.getChatId();
-
-        Environment env = environmentService.getEnvironmentByChatId(chatId).join();
-
     }
-
-
 }
